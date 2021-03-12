@@ -7,7 +7,7 @@
 }
 
 body {
-  background: #F7F7F7;
+  background: #f7f7f7;
   font-family: 'Roboto';
   font-size: 16px;
 }
@@ -25,18 +25,56 @@ body {
 
 .text {
   font-size: 1.0625em;
-  color: var(--text-color-secondary)
+  color: var(--text-color-secondary);
+}
+
+.text_small {
+  font-size: 0.9375em;
+}
+
+.text_normal {
+  font-size: 1em;
+}
+
+.text_bold {
+  font-weight: 700;
 }
 
 .text_italic {
   font-style: italic;
 }
 
-.light_title {
+.text_light {
   font-weight: 400;
 }
 
+.text_green {
+  color: var(--green-primary);
+}
+
+.text_purple {
+  color: var(--purple-primary);
+}
+
+.text_orange {
+  color: var(--orange-primary);
+}
+
+.button {
+  background: none;
+  padding: 17px 25px;
+  border-radius: 10px;
+  font-weight: 550;
+  font-size: 1em;
+  cursor: pointer;
+}
+
 /* ### HEADER ### */
+header {
+  border-bottom: 2px solid #ebebeb;
+
+}
+
 .navbar {
   display: flex;
   justify-content: space-around;
@@ -49,9 +87,6 @@ body {
   color: var(--text-color-primary);
 }
 
-header {
-  border-bottom: 2px solid #ebebeb;
-}
 
 .navbar div {
   display: flex;
@@ -92,13 +127,20 @@ header {
 
 .bet-guide {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: baseline;
   margin: 75px auto;
-  max-width: 1000px;
+  max-width: 1440px;
+}
+
+.bet-guide-container {
+  max-width: 750px;
 }
 
 .game-info {
   margin-top: 35px;
+  max-width: 648px;
 }
 
 .choose-game {
@@ -142,14 +184,14 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #ADC0C4;
+  background: #adc0c4;
   margin: 20px 12px 20px 0;
   width: 65px;
   height: 65px;
   border-radius: 100px;
   font-size: 1.25em;
   font-weight: 700;
-  color: #FFF;
+  color: #fff;
 }
 
 /* ### END GAME NUMBER ### */
@@ -163,30 +205,94 @@ header {
   margin: 25px 0;
 }
 
-.action-button {
-  padding: 17px 25px;
+.button_action {
   margin-right: 25px;
-  border-radius: 10px;
-  border: 1px solid #27C383;
-  font-weight: 550;
-  font-size: 1em;
-  cursor: pointer;
-  color: #27C383;
+  border: 1px solid #27c383;
+  color: #27c383;
 }
 
-.action-button svg {
+.button_action svg {
   width: 25px;
   margin-right: 28px;
 }
 
-.action-button_add {
+.button_action_add {
   display: flex;
   align-items: center;
-  background: #27C383;
-  color: #FFF;
+  background: #27c383;
+  color: #fff;
 }
 
 /* ### END GAME ACTIONS ### */
+
+/* ### CART ITEMS ### */
+
+.cart {
+  border: 1px solid #e2e2e2;
+  border-radius: 10px;
+  width: 317px;
+}
+
+.cart-container {
+  padding: 32px 17px;
+}
+
+.cart-item {
+  display: flex;
+  margin: 35px 0;
+}
+
+.cart-button-delete {
+  background: none;
+  padding: 0;
+}
+
+.cart-button-delete svg {
+  background: none;
+  height: 25px;
+  color: #888888;
+}
+
+.cart-item-info {
+  margin-left: 14px;
+  padding-left: 12px;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+.cart-item-info_lotofacil {
+  border-left: 4px var(--purple-primary) solid;
+}
+
+.cart-item-info_mega-sena {
+  border-left: 4px var(--green-primary) solid;
+}
+
+.cart-item-info p {
+  margin: 6px 0;
+  font-size: 0.9375em;
+}
+
+.cart-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #e2e2e2;
+  height: 96px;
+}
+
+.button_save {
+  display: flex;
+  align-items: center;
+  font-size: 2.1875em;
+}
+
+.button_save svg {
+  margin-left: 10px;
+  font-size: 25px;
+}
+
+/* ### END CART ITEMS ### */
 
 /* ### FOOTER ### */
 
@@ -195,8 +301,8 @@ footer {
   justify-content: center;
   align-items: center;
   margin-top: 150px;
-  border-top: 2px solid #EBEBEB;
-  color: var(--text-color-primary)
+  border-top: 2px solid #ebebeb;
+  color: var(--text-color-primary);
 }
 
 footer p {
