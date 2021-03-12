@@ -12,6 +12,14 @@ h6 {
   margin-block-end: 0;
 }
 
+p {
+  margin: 0;
+}
+
+button {
+  border: none;
+}
+
 li {
   display: inline;
 }
