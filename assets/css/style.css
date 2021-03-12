@@ -1,0 +1,58 @@
+:root {
+  --text-color-primary: #707070;
+  --text-color-secondary: #868686;
+}
+
+body {
+  font-family: 'Roboto';
+  font-size: 16px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: -4px;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1.25em;
+  color: var(--text-color-primary);
+}
+
+header {
+  border-bottom: 2px solid #EBEBEB;
+}
+
+.navbar div {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.logo h1 {
+  font-size: 2.75em;
+}
+
+.logo hr {
+  width: 100%;
+  border: none;
+  border-radius: 6px 6px 6px 6px;
+  border-bottom: yellowgreen 7px solid;
+}
+
+.nav-link {
+  display: inline-flex;
+  margin: 0 40px;
+  color: var(--text-color-primary);
+}
+
+.nav-link svg {
+  margin-left: 10px;
+} 
