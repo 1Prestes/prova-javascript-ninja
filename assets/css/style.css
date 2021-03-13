@@ -161,14 +161,28 @@ header {
 }
 
 .choose-game_mega-sena {
-  background: var(--green-primary);
   border: solid var(--green-primary);
-  color: #fff;
+  color: var(--green-primary);
 }
 
-.choose-game_lotomania {
+.choose-game_quina {
   border: solid var(--orange-primary);
   color: var(--orange-primary);
+}
+
+.choose-game_select_lotofacil {
+  background: var(--purple-primary);
+  color: #FFF;
+}
+
+.choose-game_select_mega-sena {
+  background: var(--green-primary);
+  color: #FFF;
+}
+
+.choose-game_select_quina {
+  background: var(--orange-primary);
+  color: #FFF;
 }
 
 /* ### END BET GUIDE ### */
