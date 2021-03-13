@@ -67,7 +67,11 @@
     }
 
     function clearGame () {
-      console.log()
+      var element = doc.querySelector('div.game-number_selected')
+      if (element) {
+        element.classList.remove('game-number_selected')
+        clearGame()
+      }
     }
 
     function completeGame () {
@@ -123,6 +127,7 @@
 
         if (element.dataset.gameType) setGameType(element.dataset.gameType)
         if (element.dataset.button === 'complete-game') completeGame()
+        if (element.dataset.button === 'clear-game') clearGame()
       },
       false
     )
