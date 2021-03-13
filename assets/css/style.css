@@ -208,6 +208,10 @@ header {
   color: #fff;
 }
 
+.game-number_selected {
+  background: var(--green-primary);
+}
+
 /* ### END GAME NUMBER ### */
 
 /* ### GAME ACTIONS ### */

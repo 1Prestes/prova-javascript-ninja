@@ -1,6 +1,10 @@
 ;(function (win, doc) {
   'use strict'
 
+  function createElement (element) {
+    return doc.createElement(element)
+  }
+
   function app () {
     var $chooseGame = doc.querySelector('div[data-choose="game"]')
     var $chooseNumbers = doc.querySelector('section[data-choose="numbers"]')
@@ -8,7 +12,7 @@
     var betHttpRequest = new XMLHttpRequest()
 
     var gameRules = []
-
+    var currentType = ''
     var gameTypes = {
       Lotofácil: 'lotofacil',
       'Mega-Sena': 'mega-sena',
@@ -20,7 +24,7 @@
 
     function createButtonChooseGame (data) {
       data.map(function (item) {
-        var button = doc.createElement('button')
+        var button = createElement('button')
         var buttonTextNode = doc.createTextNode(item.type)
         button.appendChild(buttonTextNode)
 
@@ -52,15 +56,53 @@
       }
     }
 
-    function getNumbersRamdom (range) {
-      for (var i = 0; i <= range; i++) {
-        return console.log(Math.random() * (0, range))
+    function numberExists (arr, number) {
+      return arr.some(function (currentValue) {
+        return currentValue === number
+      })
+    }
+
+    function getRandomNumbers (max) {
+      return Math.ceil(Math.random() * max)
+    }
+
+    function clearGame () {
+      console.log()
+    }
+
+    function completeGame () {
+      var rangeNumbers = []
+      var amount
+      var range
+
+      if (doc.querySelector('div.game-number_selected')) return
+
+      gameRules.map(function (rule) {
+        if (rule.type === currentType) {
+          amount = rule['max-number']
+          range = rule.range
+        }
+      })
+
+      for (var i = 1; i <= amount; i++) {
+        var newNumber = getRandomNumbers(range)
+        if (i > 1 && numberExists(rangeNumbers, newNumber)) {
+          newNumber = getRandomNumbers(range)
+          i--
+        } else {
+          var element = doc.querySelector(
+            'div[data-number="' + newNumber + '"]'
+          )
+          element.classList.add('game-number_selected')
+          rangeNumbers.push(newNumber)
+        }
       }
     }
 
     function setGameType (type) {
       gameRules.map(function (rule) {
         if (rule.type === type) {
+          currentType = rule.type
           $infoGame.textContent = rule.description
           getNumbersRange(rule.range)
         }
@@ -80,6 +122,7 @@
         var element = e.target
 
         if (element.dataset.gameType) setGameType(element.dataset.gameType)
+        if (element.dataset.button === 'complete-game') completeGame()
       },
       false
     )
