@@ -136,6 +136,7 @@ header {
 
 .bet-guide-container {
   max-width: 750px;
+  padding: 0 10px;
 }
 
 .game-info {
@@ -224,6 +225,7 @@ header {
 }
 
 .button_action {
+  margin-top: 5px;
   margin-right: 25px;
   border: 1px solid #27c383;
   color: #27c383;
