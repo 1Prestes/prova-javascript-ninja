@@ -10,6 +10,7 @@
     var $chooseNumbers = doc.querySelector('section[data-choose="numbers"]')
     var $infoGame = doc.querySelector('p[data-game="info"]')
     var $cart = doc.querySelector('div[data-cart="cart"]')
+    var $cartTotal = doc.querySelector('span[data-cart="total"]')
     var betHttpRequest = new XMLHttpRequest()
 
     var gameRules = []
@@ -109,21 +110,9 @@
       }
     }
 
-    // <div class="cart-item">
-    //     <button class="cart-button-delete" data-button="delete">
-    //         <img src="/assets/icon/trash.svg" alt="delete">
-    //     </button>
-    //     <div class="cart-item-info cart-item-info_lotofacil">
-    //         <p class="text text_bold">01,02,04,05,06,07,09,15,17,20,21, 22,23,24,25</p>
-    //         <p class="text text_bold text_normal"><span class="text_purple">Lotofácil
-    //             </span><span class="text_light">R$2,50</span></p>
-    //     </div>
-    // </div>
-
     function createCartItem (rule, numbers) {
       var cartItem = createElement('div')
       var cartButtonDelete = createElement('button')
-      var imgButtonDelete = createElement('img')
       var cartItemInfo = createElement('div')
       var textNumbers = createElement('p')
       var textBetType = createElement('p')
@@ -133,8 +122,6 @@
       cartItem.setAttribute('class', 'cart-item')
       cartButtonDelete.setAttribute('class', 'cart-button-delete')
       cartButtonDelete.setAttribute('data-button', 'delete')
-      imgButtonDelete.setAttribute('src', '/assets/icon/trash.svg')
-      imgButtonDelete.setAttribute('alt', 'button delete')
       cartItemInfo.setAttribute(
         'class',
         'cart-item-info cart-item-info_' + gameTypes[rule.type]
@@ -144,7 +131,6 @@
       textPurple.setAttribute('class', 'text_' + gameTypes[rule.type])
       textLight.setAttribute('class', 'text_light')
 
-      cartButtonDelete.appendChild(imgButtonDelete)
       cartItem.appendChild(cartButtonDelete)
 
       textNumbers.textContent = numbers.join(', ')
@@ -162,18 +148,33 @@
       if (gameNumbers.length === 0) {
         return false
       }
+      $cartTotal
       var cartItem
       gameRules.map(function (rule) {
         if (rule.type === currentType) {
           gambles.push(rule)
+
           cartItem = createCartItem(rule, gameNumbers)
         }
       })
+      cartTotal()
       $cart.appendChild(cartItem)
     }
 
-    function removeCartItem () {
-      
+    function cartTotal () {
+      var total = 0
+      gambles.map(function (gamble) {
+        return (total += gamble.price)
+      })
+      $cartTotal.textContent = total
+        .toFixed(2)
+        .split('.')
+        .join(',')
+    }
+
+    function removeGambleFromCart (item) {
+      console.log(item.parentElement)
+      $cart.removeChild(item.parentElement)
     }
 
     function setGameType (type) {
@@ -204,8 +205,9 @@
         if (element.dataset.button === 'clear-game') return clearGame()
         if (element.dataset.button === 'add-to-cart')
           return addToCart(gameNumbers)
+        if (element.dataset.button === 'delete') return removeGambleFromCart(element)
       },
-      false
+      true
     )
   }
 

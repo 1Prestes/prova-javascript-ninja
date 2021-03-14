@@ -262,18 +262,15 @@ header {
 }
 
 .cart-button-delete {
+  background: url(../icon/trash.svg) no-repeat;
+  width: 45px;
+  height: 35px;
   cursor: pointer;
   padding: 0;
 }
 
-.cart-button-delete img {
-  background: none;
-  height: 30px;
-  color: #888888;
-}
-
 .cart-item-info {
-  margin-left: 14px;
+  margin-left: 10px;
   padding-left: 12px;
   border-top-left-radius: 3px;
   border-bottom-left-radius: 3px;
