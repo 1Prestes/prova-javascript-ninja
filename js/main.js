@@ -5,12 +5,16 @@
     return doc.createElement(element)
   }
 
+  function getElement (selector) {
+    return doc.querySelector(selector)
+  }
+
   function app () {
-    var $chooseGame = doc.querySelector('div[data-choose="game"]')
-    var $chooseNumbers = doc.querySelector('section[data-choose="numbers"]')
-    var $infoGame = doc.querySelector('p[data-game="info"]')
-    var $cart = doc.querySelector('div[data-cart="cart"]')
-    var $cartTotal = doc.querySelector('span[data-cart="total"]')
+    var $chooseGame = getElement('div[data-choose="game"]')
+    var $chooseNumbers = getElement('section[data-choose="numbers"]')
+    var $infoGame = getElement('p[data-game="info"]')
+    var $cart = getElement('div[data-cart="cart"]')
+    var $cartTotal = getElement('span[data-cart="total"]')
     var betHttpRequest = new XMLHttpRequest()
 
     var gameRules = []
@@ -73,7 +77,7 @@
 
     function clearGame () {
       gameNumbers = []
-      var element = doc.querySelector('div.game-number_selected')
+      var element = getElement('div.game-number_selected')
       if (element) {
         element.classList.remove('game-number_selected')
         clearGame()
@@ -85,7 +89,7 @@
       var amount
       var range
 
-      if (doc.querySelector('div.game-number_selected')) {
+      if (getElement('div.game-number_selected')) {
         return
       }
 
@@ -102,9 +106,7 @@
           newNumber = getRandomNumbers(range)
           i--
         } else {
-          var element = doc.querySelector(
-            'div[data-number="' + newNumber + '"]'
-          )
+          var element = getElement('div[data-number="' + newNumber + '"]')
           element.classList.add('game-number_selected')
           gameNumbers.push(newNumber < 10 ? '0' + newNumber : newNumber)
         }
@@ -178,14 +180,16 @@
     }
 
     function setGameType (type) {
-      var oldGameTypeButton = doc.querySelector(
+      var oldGameTypeButton = getElement(
         'button.choose-game_select_' + gameTypes[currentType]
       )
-      if (oldGameTypeButton)
+      if (oldGameTypeButton) {
         oldGameTypeButton.classList.toggle(
           'choose-game_select_' + gameTypes[currentType]
         )
-      var currentGameTypeButton = doc.querySelector(
+      }
+
+      var currentGameTypeButton = getElement(
         'button[data-game-type="' + type + '"]'
       )
 
@@ -195,7 +199,10 @@
           currentGameTypeButton.classList.toggle(
             'choose-game_select_' + gameTypes[currentType]
           )
+
           $infoGame.textContent = rule.description
+          getElement('span[data-game="game-selected"]').textContent =
+            'FOR ' + rule.type.toUpperCase()
           getNumbersRange(rule.range)
         }
       })
@@ -205,6 +212,7 @@
       if (betHttpRequest.readyState === 4) {
         gameRules = JSON.parse(betHttpRequest.response).types
         createButtonChooseGame(gameRules)
+        setGameType(gameRules[1].type)
       }
     }
 
