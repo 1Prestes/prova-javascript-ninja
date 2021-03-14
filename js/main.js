@@ -178,9 +178,23 @@
     }
 
     function setGameType (type) {
+      var oldGameTypeButton = doc.querySelector(
+        'button.choose-game_select_' + gameTypes[currentType]
+      )
+      if (oldGameTypeButton)
+        oldGameTypeButton.classList.toggle(
+          'choose-game_select_' + gameTypes[currentType]
+        )
+      var currentGameTypeButton = doc.querySelector(
+        'button[data-game-type="' + type + '"]'
+      )
+      
       gameRules.map(function (rule) {
         if (rule.type === type) {
           currentType = rule.type
+          currentGameTypeButton.classList.toggle(
+            'choose-game_select_' + gameTypes[currentType]
+          )
           $infoGame.textContent = rule.description
           getNumbersRange(rule.range)
         }
@@ -205,7 +219,8 @@
         if (element.dataset.button === 'clear-game') return clearGame()
         if (element.dataset.button === 'add-to-cart')
           return addToCart(gameNumbers)
-        if (element.dataset.button === 'delete') return removeGambleFromCart(element)
+        if (element.dataset.button === 'delete')
+          return removeGambleFromCart(element)
       },
       true
     )
