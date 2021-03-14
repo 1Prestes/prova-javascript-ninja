@@ -48,15 +48,15 @@ body {
   font-weight: 400;
 }
 
-.text_green {
+.text_mega-sena {
   color: var(--green-primary);
 }
 
-.text_purple {
+.text_lotofacil {
   color: var(--purple-primary);
 }
 
-.text_orange {
+.text_quina {
   color: var(--orange-primary);
 }
 
@@ -257,17 +257,18 @@ header {
 
 .cart-item {
   display: flex;
+  align-items: center;
   margin: 35px 0;
 }
 
 .cart-button-delete {
-  background: none;
+  cursor: pointer;
   padding: 0;
 }
 
-.cart-button-delete svg {
+.cart-button-delete img {
   background: none;
-  height: 25px;
+  height: 30px;
   color: #888888;
 }
 
@@ -284,6 +285,10 @@ header {
 
 .cart-item-info_mega-sena {
   border-left: 4px var(--green-primary) solid;
+}
+
+.cart-item-info_quina {
+  border-left: 4px var(--orange-primary) solid;
 }
 
 .cart-item-info p {
@@ -303,6 +308,7 @@ header {
   display: flex;
   align-items: center;
   font-size: 2.1875em;
+  color: var(--green-primary);
 }
 
 .button_save svg {
