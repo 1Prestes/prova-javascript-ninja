@@ -52,7 +52,8 @@
       if ($chooseNumbers.firstChild) removeChild($chooseNumbers)
       for (var i = 1; i <= range; i++) {
         var number = doc.createElement('div')
-        var numberContent = doc.createTextNode(i)
+
+        var numberContent = doc.createTextNode(i < 10 ? '0' + i : i)
         number.setAttribute('class', 'game-number')
         number.setAttribute('data-number', i)
         number.appendChild(numberContent)
@@ -105,7 +106,7 @@
             'div[data-number="' + newNumber + '"]'
           )
           element.classList.add('game-number_selected')
-          gameNumbers.push(newNumber)
+          gameNumbers.push(newNumber < 10 ? '0' + newNumber : newNumber)
         }
       }
     }
@@ -173,7 +174,6 @@
     }
 
     function removeGambleFromCart (item) {
-      console.log(item.parentElement)
       $cart.removeChild(item.parentElement)
     }
 
@@ -188,7 +188,7 @@
       var currentGameTypeButton = doc.querySelector(
         'button[data-game-type="' + type + '"]'
       )
-      
+
       gameRules.map(function (rule) {
         if (rule.type === type) {
           currentType = rule.type
