@@ -239,7 +239,8 @@ header {
 .button_action_add {
   display: flex;
   align-items: center;
-  background: #27c383;
+  /* background: url(../icon/shopping-cart.svg) no-repeat; */
+  background-color: #27c383;
   color: #fff;
 }
 

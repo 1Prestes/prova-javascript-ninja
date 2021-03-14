@@ -12,14 +12,14 @@
   function app () {
     var $chooseGame = getElement('div[data-choose="game"]')
     var $chooseNumbers = getElement('section[data-choose="numbers"]')
-    var $infoGame = getElement('p[data-game="info"]')
     var $cart = getElement('div[data-cart="cart"]')
     var $cartTotal = getElement('span[data-cart="total"]')
+
     var betHttpRequest = new XMLHttpRequest()
 
-    var gameRules = []
-    var currentType = ''
-    var gameNumbers = []
+    var allGames = []
+    var currentGame = []
+    var gambleNumbers = []
     var gambles = []
     var gameTypes = {
       Lotofácil: 'lotofacil',
@@ -47,8 +47,9 @@
     }
 
     function removeChild (element) {
-      while (element.firstChild) {
+      if (element.firstChild) {
         element.removeChild(element.firstChild)
+        removeChild(element)
       }
     }
 
@@ -59,7 +60,7 @@
 
         var numberContent = doc.createTextNode(i < 10 ? '0' + i : i)
         number.setAttribute('class', 'game-number')
-        number.setAttribute('data-number', i)
+        number.setAttribute('data-number', i < 10 ? '0' + i : i)
         number.appendChild(numberContent)
         $chooseNumbers.appendChild(number)
       }
@@ -76,41 +77,51 @@
     }
 
     function clearGame () {
-      gameNumbers = []
-      var element = getElement('div.game-number_selected')
+      gambleNumbers = []
+      var element = getElement('.game-number_selected')
       if (element) {
         element.classList.remove('game-number_selected')
         clearGame()
       }
     }
 
+    function generateGameNumbers (amount, range) {
+      for (var i = 1; i <= amount; i++) {
+        var newNumber = getRandomNumbers(range)
+        if (
+          i > 1 &&
+          numberExists(
+            gambleNumbers,
+            newNumber < 10 ? '0' + newNumber : newNumber
+          )
+        ) {
+          newNumber = getRandomNumbers(range)
+          i--
+        } else {
+          gambleNumbers.push(newNumber < 10 ? '0' + newNumber : newNumber)
+        }
+      }
+    }
+
+    function paintNumbers () {
+      gambleNumbers.map(function (number) {
+        var element = getElement('div[data-number="' + number + '"]')
+        element.classList.add('game-number_selected')
+      })
+    }
+
     function completeGame () {
-      gameNumbers = []
-      var amount
-      var range
+      gambleNumbers = []
 
       if (getElement('div.game-number_selected')) {
         return
       }
+      var game = allGames.filter(function (game) {
+        return game.type === currentGame.type
+      })[0]
 
-      gameRules.map(function (rule) {
-        if (rule.type === currentType) {
-          amount = rule['max-number']
-          range = rule.range
-        }
-      })
-
-      for (var i = 1; i <= amount; i++) {
-        var newNumber = getRandomNumbers(range)
-        if (i > 1 && numberExists(gameNumbers, newNumber)) {
-          newNumber = getRandomNumbers(range)
-          i--
-        } else {
-          var element = getElement('div[data-number="' + newNumber + '"]')
-          element.classList.add('game-number_selected')
-          gameNumbers.push(newNumber < 10 ? '0' + newNumber : newNumber)
-        }
-      }
+      generateGameNumbers(game['max-number'], game.range)
+      paintNumbers()
     }
 
     function createCartItem (rule, numbers) {
@@ -147,19 +158,20 @@
       return cartItem
     }
 
-    function addToCart (gameNumbers) {
-      if (gameNumbers.length === 0) {
+    function addToCart (gambleNumbers) {
+      if (gambleNumbers.length === 0) {
         return false
       }
       $cartTotal
       var cartItem
-      gameRules.map(function (rule) {
-        if (rule.type === currentType) {
-          gambles.push(rule)
 
-          cartItem = createCartItem(rule, gameNumbers)
+      allGames.map(function (game) {
+        if (game.type === currentGame.type) {
+          gambles.push(game)
+          cartItem = createCartItem(game, gambleNumbers)
         }
       })
+
       cartTotal()
       $cart.appendChild(cartItem)
     }
@@ -179,40 +191,46 @@
       $cart.removeChild(item.parentElement)
     }
 
-    function setGameType (type) {
-      var oldGameTypeButton = getElement(
-        'button.choose-game_select_' + gameTypes[currentType]
-      )
-      if (oldGameTypeButton) {
-        oldGameTypeButton.classList.toggle(
-          'choose-game_select_' + gameTypes[currentType]
+    function getCurrentGameType (type) {
+      return allGames.filter(function (rule) {
+        return rule.type === type
+      })
+    }
+
+    function getPreviousKindOfGame () {
+      return getElement('.choose-game_select_' + gameTypes[currentGame.type])
+    }
+
+    function getCurrentKindOfGame (type) {
+      return getElement('button[data-game-type="' + type + '"]')
+    }
+
+    function changeButtonGameType (type, previousType) {
+      if (getPreviousKindOfGame()) {
+        getPreviousKindOfGame().classList.toggle(
+          'choose-game_select_' + gameTypes[currentGame.type]
         )
       }
-
-      var currentGameTypeButton = getElement(
-        'button[data-game-type="' + type + '"]'
+      getCurrentKindOfGame(type).classList.toggle(
+        'choose-game_select_' + gameTypes[type]
       )
+    }
 
-      gameRules.map(function (rule) {
-        if (rule.type === type) {
-          currentType = rule.type
-          currentGameTypeButton.classList.toggle(
-            'choose-game_select_' + gameTypes[currentType]
-          )
+    function setGameType (type) {
+      changeButtonGameType(type, currentGame.type)
+      currentGame = getCurrentGameType(type)[0]
 
-          $infoGame.textContent = rule.description
-          getElement('span[data-game="game-selected"]').textContent =
-            'FOR ' + rule.type.toUpperCase()
-          getNumbersRange(rule.range)
-        }
-      })
+      getElement('span[data-game="game-selected"]').textContent =
+        'FOR ' + currentGame.type.toUpperCase()
+      getElement('p[data-game="info"]').textContent = currentGame.description
+      getNumbersRange(currentGame.range)
     }
 
     betHttpRequest.onreadystatechange = function () {
       if (betHttpRequest.readyState === 4) {
-        gameRules = JSON.parse(betHttpRequest.response).types
-        createButtonChooseGame(gameRules)
-        setGameType(gameRules[1].type)
+        allGames = JSON.parse(betHttpRequest.response).types
+        createButtonChooseGame(allGames)
+        setGameType(allGames[1].type)
       }
     }
 
@@ -226,7 +244,7 @@
         if (element.dataset.button === 'complete-game') return completeGame()
         if (element.dataset.button === 'clear-game') return clearGame()
         if (element.dataset.button === 'add-to-cart')
-          return addToCart(gameNumbers)
+          return addToCart(gambleNumbers)
         if (element.dataset.button === 'delete')
           return removeGambleFromCart(element)
       },
