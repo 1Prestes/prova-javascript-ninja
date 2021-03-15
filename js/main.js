@@ -211,6 +211,7 @@
     }
 
     function setGameType (type) {
+      gambleNumbers = []
       changeButtonGameType(type, currentGame.type)
       currentGame = getCurrentGameType(type)[0]
 
