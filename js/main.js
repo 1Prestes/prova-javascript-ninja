@@ -110,14 +110,44 @@
       })
     }
 
-    function completeGame () {
-      if (gambleNumbers.length > 0) return false
+    function removeNumber (arr, currentNumber) {
+      return (arr = arr.filter(function (number) {
+        return number != currentNumber
+      }))
+    }
 
+    function removeOneNumber (number) {
+      var element = getElement('div[data-number="' + number + '"]')
+
+      element.classList.remove('game-number_selected')
+    }
+
+    function selectNumber (currentNumber) {
       var game = allGames.filter(function (game) {
         return game.type === currentGame.type
       })[0]
 
-      generateGameNumbers(game['max-number'], game.range)
+      if (numberExists(gambleNumbers, currentNumber)) {
+        gambleNumbers = removeNumber(gambleNumbers, currentNumber)
+        removeOneNumber(currentNumber)
+        paintNumbers()
+        return
+      }
+
+      if (gambleNumbers.length < game['max-number']) {
+        gambleNumbers.push(currentNumber)
+        paintNumbers()
+      }
+    }
+
+    function completeGame () {
+      var game = allGames.filter(function (game) {
+        return game.type === currentGame.type
+      })[0]
+
+      if (gambleNumbers.length >= game['max-number']) return false
+
+      generateGameNumbers(game['max-number'] - gambleNumbers.length, game.range)
       paintNumbers()
     }
 
@@ -168,6 +198,7 @@
       })
       cartTotal()
       $cart.appendChild(cartItem)
+      clearGame()
     }
 
     function cartTotal () {
@@ -242,6 +273,7 @@
           return addToCart(gambleNumbers)
         if (element.dataset.button === 'delete')
           return removeGambleFromCart(element)
+        if (element.dataset.number) return selectNumber(element.dataset.number)
       },
       true
     )
