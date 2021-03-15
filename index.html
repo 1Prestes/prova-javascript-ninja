@@ -61,9 +61,13 @@
             </div>
 
             <section class="choose-number" data-choose="numbers">
-                
+
             </section>
 
+            <div class="message">
+                <span class="message message_error" data-message="actions-error"></span>
+                <span class="message message_success" data-message="actions-success"></span>
+            </div>
             <div class="actions">
                 <div>
                     <button class="button button_action action-button_complete" data-button="complete-game">Complete
@@ -87,9 +91,13 @@
                     <h1 class="title">CART</h1>
 
                     <div data-cart="cart">
+                        <span class="message message_cart" data-message="cart-status">Seu carrinho está vazio!</span>
+                        <span class="message message_cart message_delete" data-message="cart-message"></span>
                     </div>
 
-                    <h2 class="title">CART <span class="text_light">TOTAL: R$<span data-cart="total">0,00</span></span></h2>
+                    <h2 class="title">CART 
+                        <span class="text_light"><span data-cart="total"></span></span>
+                    </h2>
                 </div>
                 <div class="cart-footer">
                     <button class="button button_save text_green">

@@ -4,6 +4,7 @@
   --green-primary: #27c383;
   --purple-primary: #7f3992;
   --orange-primary: #f79c31;
+  --red-primary: #dc3545;
 }
 
 body {
@@ -48,18 +49,24 @@ body {
   font-weight: 400;
 }
 
-.text_mega-sena {
+.message {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 0.95em;
+}
+
+.message_error {
+  color: var(--red-primary);
+}
+
+.message_success {
   color: var(--green-primary);
 }
-
-.text_lotofacil {
-  color: var(--purple-primary);
+.message_delete {
+  color: var(--red-primary);
 }
-
-.text_quina {
-  color: var(--orange-primary);
-}
-
 .button {
   background: none;
   padding: 17px 25px;
@@ -72,7 +79,6 @@ body {
 /* ### HEADER ### */
 header {
   border-bottom: 2px solid #ebebeb;
-
 }
 
 .navbar {
@@ -86,7 +92,6 @@ header {
   font-size: 1.25em;
   color: var(--text-color-primary);
 }
-
 
 .navbar div {
   display: flex;
@@ -171,7 +176,7 @@ header {
   color: var(--orange-primary);
 } */
 
-.choose-game_select_lotofacil {
+/* .choose-game_select_lotofacil {
   background: var(--purple-primary);
   color: #FFF;
 }
@@ -184,7 +189,7 @@ header {
 .choose-game_select_quina {
   background: var(--orange-primary);
   color: #FFF;
-}
+} */
 
 /* ### END BET GUIDE ### */
 
@@ -240,7 +245,6 @@ header {
 .button_action_add {
   display: flex;
   align-items: center;
-  /* background: url(../icon/shopping-cart.svg) no-repeat; */
   background-color: #27c383;
   color: #fff;
 }
@@ -281,7 +285,7 @@ header {
   border-bottom-left-radius: 3px;
 }
 
-.cart-item-info_lotofacil {
+/* .cart-item-info_lotofacil {
   border-left: 4px var(--purple-primary) solid;
 }
 
@@ -291,7 +295,7 @@ header {
 
 .cart-item-info_quina {
   border-left: 4px var(--orange-primary) solid;
-}
+} */
 
 .cart-item-info p {
   margin: 6px 0;

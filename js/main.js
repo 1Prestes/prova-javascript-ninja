@@ -14,6 +14,10 @@
     var $chooseNumbers = getElement('section[data-choose="numbers"]')
     var $cart = getElement('div[data-cart="cart"]')
     var $cartTotal = getElement('span[data-cart="total"]')
+    var $errorActions = getElement('span[data-message="actions-error"]')
+    var $successActions = getElement('span[data-message="actions-success"]')
+    var $cartStatus = getElement('span[data-message="cart-status"]')
+    var $cartMessage = getElement('span[data-message="cart-message"]')
 
     var betHttpRequest = new XMLHttpRequest()
 
@@ -31,16 +35,12 @@
         var buttonTextNode = doc.createTextNode(item.type)
         button.appendChild(buttonTextNode)
 
-        button.setAttribute(
-          'class',
-          'button choose-game choose-game_' + item.type
-        )
+        button.setAttribute('class', 'button choose-game')
         button.style.border = 'solid ' + item.color
         button.style.color = item.color
 
         button.setAttribute('data-game-type', item.type)
-        button.setAttribute('data-game-type-selected', currentGame.type)
-        console.log(currentGame)
+        button.setAttribute('data-game-type-selected', 'false')
 
         $chooseGame.appendChild(button)
       })
@@ -76,13 +76,18 @@
       return Math.ceil(Math.random() * max)
     }
 
-    function clearGame () {
-      gambleNumbers = []
+    function clearGame (isClicked) {
+      if (gambleNumbers.length === 0)
+        return showMessage($errorActions, 'Nenhum numero selecionado.')
+
       var element = getElement('.game-number_selected')
       if (element) {
         element.classList.remove('game-number_selected')
         clearGame()
       }
+      gambleNumbers = []
+
+      if (isClicked) return showMessage($successActions, 'Numeros Limpos')
     }
 
     function generateGameNumbers (amount, range) {
@@ -123,6 +128,9 @@
     }
 
     function selectNumber (currentNumber) {
+      // $errorActions.textContent = ''
+      // $successActions.textContent = ''
+
       var game = allGames.filter(function (game) {
         return game.type === currentGame.type
       })[0]
@@ -145,10 +153,15 @@
         return game.type === currentGame.type
       })[0]
 
-      if (gambleNumbers.length >= game['max-number']) return false
+      if (gambleNumbers.length >= game['max-number']) {
+        showMessage($errorActions, 'O jogo já está completo!')
+
+        return false
+      }
 
       generateGameNumbers(game['max-number'] - gambleNumbers.length, game.range)
       paintNumbers()
+      showMessage($successActions, 'Jogo completado com sucesso!')
     }
 
     function createCartItem (game, numbers) {
@@ -163,20 +176,24 @@
       cartItem.setAttribute('class', 'cart-item')
       cartButtonDelete.setAttribute('class', 'cart-button-delete')
       cartButtonDelete.setAttribute('data-button', 'delete')
-      cartButtonDelete.setAttribute('data-value', game.price)
-      cartItemInfo.setAttribute(
-        'class',
-        'cart-item-info cart-item-info_' + game.type
-      )
+      cartButtonDelete.setAttribute('data-value', game.id)
+      cartItemInfo.setAttribute('class', 'cart-item-info')
+      cartItemInfo.style.borderLeft = '4px ' + game.color + ' solid'
       textNumbers.setAttribute('class', 'text text_bold')
       textBetType.setAttribute('class', 'text text_bold text_normal')
-      textPurple.setAttribute('class', 'text_' + game.type)
+      textPurple.style.color = game.color
       textLight.setAttribute('class', 'text_light')
 
       cartItem.appendChild(cartButtonDelete)
 
       textNumbers.textContent = numbers.join(', ')
       textPurple.textContent = game.type
+      textLight.textContent =
+        ' R$ ' +
+        game.price
+          .toFixed(2)
+          .split('.')
+          .join(',')
       textBetType.appendChild(textPurple)
       textBetType.appendChild(textLight)
       cartItemInfo.appendChild(textNumbers)
@@ -185,26 +202,46 @@
       return cartItem
     }
 
-    function addToCart (gambleNumbers) {
-      if (gambleNumbers.length === 0) return false
-      if (gambleNumbers.length !== currentGame['max-number'])
-        return console.log(
-          'Você só selecionou ' +
-            gambleNumbers.length +
-            ' numeros, faltam: ' +
-            (Number(currentGame['max-number']) - gambleNumbers.length)
-        )
+    function removeMessage (element) {
+      setTimeout(function () {
+        element.textContent = ''
+      }, 5000)
+    }
 
+    function showMessage (element, message) {
+      element.textContent = message
+      removeMessage(element)
+    }
+
+    function generateId () {
+      var millisecunds = Date.now().toString()
+      return millisecunds
+    }
+
+    function addToCart (gambleNumbers) {
+      $cartStatus.textContent = ''
+      if (gambleNumbers.length !== currentGame['max-number']) {
+        var messageError = ($errorActions.textContent =
+          gambleNumbers.length +
+          ' numero(s) selecionado, selecione mais ' +
+          (Number(currentGame['max-number']) - gambleNumbers.length) +
+          ' numero(s) para completar sua aposta*')
+        return showMessage($errorActions, messageError)
+      }
       var cartItem
 
-      allGames.map(function (game, i) {
+      allGames.map(function (game) {
         if (game.type === currentGame.type) {
-          gambles.push(game)
+        
+          game.id = generateId()
+          console.log(game)
           cartItem = createCartItem(game, gambleNumbers)
+          gambles.push(game)
+          $cart.appendChild(cartItem)
         }
       })
       cartTotal()
-      $cart.appendChild(cartItem)
+      showMessage($successActions, 'Jogo adicionado ao carrinho!')
       clearGame()
     }
 
@@ -213,13 +250,23 @@
       gambles.map(function (gamble) {
         return (total += gamble.price)
       })
-      $cartTotal.textContent = total
-        .toFixed(2)
-        .split('.')
-        .join(',')
+      $cartTotal.textContent =
+        'Total: R$ ' +
+        total
+          .toFixed(2)
+          .split('.')
+          .join(',')
     }
 
     function removeGambleFromCart (item) {
+      showMessage($cartMessage, 'Jogo removido do carrinho.')
+      gambles.map(function (game) {
+        console.log(game.id, item.dataset.value)
+        if (game.id === item.dataset.value.toString) {
+          console.log('game')
+        }
+      })
+      console.log(gambles)
       $cart.removeChild(item.parentElement)
     }
 
@@ -230,25 +277,36 @@
     }
 
     function getPreviousKindOfGame () {
-      return getElement('.choose-game_select_' + currentGame.type)
+      return getElement('[data-game-type-selected="true"]')
     }
 
     function getCurrentKindOfGame (type) {
       return getElement('button[data-game-type="' + type + '"]')
     }
 
-    function changeButtonGameType (type) {
+    function changeButtonGameType (type, current) {
       if (getPreviousKindOfGame()) {
-        getPreviousKindOfGame().classList.toggle(
-          'choose-game_select_' + currentGame.type
-        )
+        getPreviousKindOfGame().style.background = '#FFF'
+        getPreviousKindOfGame().style.color = currentGame.color
+        getPreviousKindOfGame().setAttribute('data-game-type-selected', 'false')
       }
-      console.log(type)
-      getCurrentKindOfGame(type).classList.toggle('choose-game_select_' + type)
+      allGames.map(function (game) {
+        if (game.type === type) {
+          getCurrentKindOfGame(type).style.background = game.color
+          getCurrentKindOfGame(type).style.color = '#FFF'
+          getCurrentKindOfGame(type).setAttribute(
+            'data-game-type-selected',
+            'true'
+          )
+        }
+      })
     }
 
     function setGameType (type) {
       gambleNumbers = []
+
+      showMessage($successActions, '')
+      showMessage($errorActions, '')
       changeButtonGameType(type, currentGame.type)
       currentGame = getCurrentGameType(type)[0]
 
@@ -281,7 +339,7 @@
         if (element.dataset.gameType)
           return setGameType(element.dataset.gameType)
         if (element.dataset.button === 'complete-game') return completeGame()
-        if (element.dataset.button === 'clear-game') return clearGame()
+        if (element.dataset.button === 'clear-game') return clearGame('clicked')
         if (element.dataset.button === 'add-to-cart')
           return addToCart(gambleNumbers)
         if (element.dataset.button === 'delete')
