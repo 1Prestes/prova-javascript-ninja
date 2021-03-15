@@ -111,11 +111,8 @@
     }
 
     function completeGame () {
-      gambleNumbers = []
+      if (gambleNumbers.length > 0) return false
 
-      if (getElement('div.game-number_selected')) {
-        return
-      }
       var game = allGames.filter(function (game) {
         return game.type === currentGame.type
       })[0]
@@ -124,7 +121,7 @@
       paintNumbers()
     }
 
-    function createCartItem (rule, numbers) {
+    function createCartItem (game, numbers) {
       var cartItem = createElement('div')
       var cartButtonDelete = createElement('button')
       var cartItemInfo = createElement('div')
@@ -136,20 +133,20 @@
       cartItem.setAttribute('class', 'cart-item')
       cartButtonDelete.setAttribute('class', 'cart-button-delete')
       cartButtonDelete.setAttribute('data-button', 'delete')
+      cartButtonDelete.setAttribute('data-value', game.price)
       cartItemInfo.setAttribute(
         'class',
-        'cart-item-info cart-item-info_' + gameTypes[rule.type]
+        'cart-item-info cart-item-info_' + gameTypes[game.type]
       )
       textNumbers.setAttribute('class', 'text text_bold')
       textBetType.setAttribute('class', 'text text_bold text_normal')
-      textPurple.setAttribute('class', 'text_' + gameTypes[rule.type])
+      textPurple.setAttribute('class', 'text_' + gameTypes[game.type])
       textLight.setAttribute('class', 'text_light')
 
       cartItem.appendChild(cartButtonDelete)
 
       textNumbers.textContent = numbers.join(', ')
-      textPurple.textContent = rule.type
-      textLight.textContent = ' R$' + rule.price.toFixed(2)
+      textPurple.textContent = game.type
       textBetType.appendChild(textPurple)
       textBetType.appendChild(textLight)
       cartItemInfo.appendChild(textNumbers)
@@ -159,19 +156,16 @@
     }
 
     function addToCart (gambleNumbers) {
-      if (gambleNumbers.length === 0) {
-        return false
-      }
-      $cartTotal
+      if (gambleNumbers.length === 0) return false
+
       var cartItem
 
-      allGames.map(function (game) {
+      allGames.map(function (game, i) {
         if (game.type === currentGame.type) {
           gambles.push(game)
           cartItem = createCartItem(game, gambleNumbers)
         }
       })
-
       cartTotal()
       $cart.appendChild(cartItem)
     }
@@ -192,8 +186,8 @@
     }
 
     function getCurrentGameType (type) {
-      return allGames.filter(function (rule) {
-        return rule.type === type
+      return allGames.filter(function (game) {
+        return game.type === type
       })
     }
 
