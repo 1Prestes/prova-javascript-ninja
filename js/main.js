@@ -21,11 +21,6 @@
     var currentGame = []
     var gambleNumbers = []
     var gambles = []
-    var gameTypes = {
-      Lotofácil: 'lotofacil',
-      'Mega-Sena': 'mega-sena',
-      Quina: 'quina'
-    }
 
     betHttpRequest.open('GET', '../games.json', true)
     betHttpRequest.send()
@@ -38,9 +33,14 @@
 
         button.setAttribute(
           'class',
-          'button choose-game choose-game_' + gameTypes[item.type]
+          'button choose-game choose-game_' + item.type
         )
+        button.style.border = 'solid ' + item.color
+        button.style.color = item.color
+
         button.setAttribute('data-game-type', item.type)
+        button.setAttribute('data-game-type-selected', currentGame.type)
+        console.log(currentGame)
 
         $chooseGame.appendChild(button)
       })
@@ -166,11 +166,11 @@
       cartButtonDelete.setAttribute('data-value', game.price)
       cartItemInfo.setAttribute(
         'class',
-        'cart-item-info cart-item-info_' + gameTypes[game.type]
+        'cart-item-info cart-item-info_' + game.type
       )
       textNumbers.setAttribute('class', 'text text_bold')
       textBetType.setAttribute('class', 'text text_bold text_normal')
-      textPurple.setAttribute('class', 'text_' + gameTypes[game.type])
+      textPurple.setAttribute('class', 'text_' + game.type)
       textLight.setAttribute('class', 'text_light')
 
       cartItem.appendChild(cartButtonDelete)
@@ -187,6 +187,13 @@
 
     function addToCart (gambleNumbers) {
       if (gambleNumbers.length === 0) return false
+      if (gambleNumbers.length !== currentGame['max-number'])
+        return console.log(
+          'Você só selecionou ' +
+            gambleNumbers.length +
+            ' numeros, faltam: ' +
+            (Number(currentGame['max-number']) - gambleNumbers.length)
+        )
 
       var cartItem
 
@@ -223,22 +230,21 @@
     }
 
     function getPreviousKindOfGame () {
-      return getElement('.choose-game_select_' + gameTypes[currentGame.type])
+      return getElement('.choose-game_select_' + currentGame.type)
     }
 
     function getCurrentKindOfGame (type) {
       return getElement('button[data-game-type="' + type + '"]')
     }
 
-    function changeButtonGameType (type, previousType) {
+    function changeButtonGameType (type) {
       if (getPreviousKindOfGame()) {
         getPreviousKindOfGame().classList.toggle(
-          'choose-game_select_' + gameTypes[currentGame.type]
+          'choose-game_select_' + currentGame.type
         )
       }
-      getCurrentKindOfGame(type).classList.toggle(
-        'choose-game_select_' + gameTypes[type]
-      )
+      console.log(type)
+      getCurrentKindOfGame(type).classList.toggle('choose-game_select_' + type)
     }
 
     function setGameType (type) {
@@ -252,9 +258,16 @@
       getNumbersRange(currentGame.range)
     }
 
+    function cleanGamesData (games) {
+      allGames = games.map(function (game, index) {
+        game.type = game.type.split(' ').join('-')
+        return game
+      })
+    }
+
     betHttpRequest.onreadystatechange = function () {
       if (betHttpRequest.readyState === 4) {
-        allGames = JSON.parse(betHttpRequest.response).types
+        cleanGamesData(JSON.parse(betHttpRequest.response).types)
         createButtonChooseGame(allGames)
         setGameType(allGames[1].type)
       }
