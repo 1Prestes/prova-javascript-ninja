@@ -67,6 +67,11 @@ body {
 .message_delete {
   color: var(--red-primary);
 }
+
+.invisible {
+  display: none;
+}
+
 .button {
   background: none;
   padding: 17px 25px;
@@ -150,46 +155,16 @@ header {
 }
 
 .choose-game {
-  width: 113px;
+  min-width: 103px;
   background: none;
   margin: 20px 25px 20px 0;
-  padding: 10px 0;
+  padding: 10px 10px;
   font-size: 0.875em;
   font-style: italic;
   font-weight: 700;
   border: 2px;
   border-radius: 100px;
 }
-/* 
-.choose-game_lotofacil {
-  border: solid var(--purple-primary);
-  color: var(--purple-primary);
-}
-
-.choose-game_mega-sena {
-  border: solid var(--green-primary);
-  color: var(--green-primary);
-}
-
-.choose-game_quina {
-  border: solid var(--orange-primary);
-  color: var(--orange-primary);
-} */
-
-/* .choose-game_select_lotofacil {
-  background: var(--purple-primary);
-  color: #FFF;
-}
-
-.choose-game_select_mega-sena {
-  background: var(--green-primary);
-  color: #FFF;
-}
-
-.choose-game_select_quina {
-  background: var(--orange-primary);
-  color: #FFF;
-} */
 
 /* ### END BET GUIDE ### */
 
@@ -284,18 +259,6 @@ header {
   border-top-left-radius: 3px;
   border-bottom-left-radius: 3px;
 }
-
-/* .cart-item-info_lotofacil {
-  border-left: 4px var(--purple-primary) solid;
-}
-
-.cart-item-info_mega-sena {
-  border-left: 4px var(--green-primary) solid;
-}
-
-.cart-item-info_quina {
-  border-left: 4px var(--orange-primary) solid;
-} */
 
 .cart-item-info p {
   margin: 6px 0;

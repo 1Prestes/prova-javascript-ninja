@@ -14,10 +14,10 @@
     var $chooseNumbers = getElement('section[data-choose="numbers"]')
     var $cart = getElement('div[data-cart="cart"]')
     var $cartTotal = getElement('span[data-cart="total"]')
-    var $errorActions = getElement('span[data-message="actions-error"]')
-    var $successActions = getElement('span[data-message="actions-success"]')
     var $cartStatus = getElement('span[data-message="cart-status"]')
     var $cartMessage = getElement('span[data-message="cart-message"]')
+    var $errorActions = getElement('span[data-message="actions-error"]')
+    var $successActions = getElement('span[data-message="actions-success"]')
 
     var betHttpRequest = new XMLHttpRequest()
 
@@ -128,9 +128,6 @@
     }
 
     function selectNumber (currentNumber) {
-      // $errorActions.textContent = ''
-      // $successActions.textContent = ''
-
       var game = allGames.filter(function (game) {
         return game.type === currentGame.type
       })[0]
@@ -140,6 +137,11 @@
         removeOneNumber(currentNumber)
         paintNumbers()
         return
+      }
+
+      if (gambleNumbers.length === game['max-number']) {
+        gambleNumbers = removeNumber(gambleNumbers, currentNumber)
+        return removeOneNumber(currentNumber)
       }
 
       if (gambleNumbers.length < game['max-number']) {
@@ -164,7 +166,7 @@
       showMessage($successActions, 'Jogo completado com sucesso!')
     }
 
-    function createCartItem (game, numbers) {
+    function createCartItem (game) {
       var cartItem = createElement('div')
       var cartButtonDelete = createElement('button')
       var cartItemInfo = createElement('div')
@@ -186,7 +188,7 @@
 
       cartItem.appendChild(cartButtonDelete)
 
-      textNumbers.textContent = numbers.join(', ')
+      textNumbers.textContent = game.numbers.join(', ')
       textPurple.textContent = game.type
       textLight.textContent =
         ' R$ ' +
@@ -214,8 +216,29 @@
     }
 
     function generateId () {
-      var millisecunds = Date.now().toString()
-      return millisecunds
+      return Date.now().toString()
+    }
+
+    function renderCart (game, numbers) {
+      allGames.map(function (item) {
+        if (item.type === game.type) {
+          var bet = {
+            id: generateId(),
+            type: item.type,
+            description: item.description,
+            range: item.range,
+            price: item.price,
+            'max-number': item['max-number'],
+            color: item.color,
+            'min-cart-value': item['min-cart-value'],
+            numbers
+          }
+
+          var cartItem = createCartItem(bet)
+          gambles.push(bet)
+          $cart.appendChild(cartItem)
+        }
+      })
     }
 
     function addToCart (gambleNumbers) {
@@ -228,46 +251,39 @@
           ' numero(s) para completar sua aposta*')
         return showMessage($errorActions, messageError)
       }
-      var cartItem
 
-      allGames.map(function (game) {
-        if (game.type === currentGame.type) {
-        
-          game.id = generateId()
-          console.log(game)
-          cartItem = createCartItem(game, gambleNumbers)
-          gambles.push(game)
-          $cart.appendChild(cartItem)
-        }
-      })
-      cartTotal()
+      renderCart(currentGame, gambleNumbers)
+      cartTotal(gambles)
       showMessage($successActions, 'Jogo adicionado ao carrinho!')
-      clearGame()
+      return clearGame()
     }
 
-    function cartTotal () {
-      var total = 0
-      gambles.map(function (gamble) {
-        return (total += gamble.price)
-      })
+    function cartTotal (gambles) {
+      var total = gambles.reduce(function (accumulated, current) {
+        return accumulated + Number(current.price)
+      }, 0)
+
       $cartTotal.textContent =
         'Total: R$ ' +
         total
           .toFixed(2)
           .split('.')
           .join(',')
+      if (!total) {
+        $cartTotal.parentElement.classList.add('invisible')
+        return ($cartStatus.textContent = 'Seu carrinho está vazio!')
+      }
+      $cartTotal.parentElement.classList.remove('invisible')
     }
 
     function removeGambleFromCart (item) {
-      showMessage($cartMessage, 'Jogo removido do carrinho.')
-      gambles.map(function (game) {
-        console.log(game.id, item.dataset.value)
-        if (game.id === item.dataset.value.toString) {
-          console.log('game')
-        }
+      gambles = gambles.filter(function (game) {
+        return game.id !== item.dataset.value
       })
-      console.log(gambles)
+
+      cartTotal(gambles)
       $cart.removeChild(item.parentElement)
+      showMessage($cartMessage, 'Jogo removido do carrinho.')
     }
 
     function getCurrentGameType (type) {
@@ -335,16 +351,14 @@
       'click',
       function (e) {
         var element = e.target
+        var dataset = e.target.dataset
 
-        if (element.dataset.gameType)
-          return setGameType(element.dataset.gameType)
-        if (element.dataset.button === 'complete-game') return completeGame()
-        if (element.dataset.button === 'clear-game') return clearGame('clicked')
-        if (element.dataset.button === 'add-to-cart')
-          return addToCart(gambleNumbers)
-        if (element.dataset.button === 'delete')
-          return removeGambleFromCart(element)
-        if (element.dataset.number) return selectNumber(element.dataset.number)
+        if (dataset.gameType) return setGameType(dataset.gameType)
+        if (dataset.button === 'complete-game') return completeGame()
+        if (dataset.button === 'clear-game') return clearGame('clicked')
+        if (dataset.button === 'add-to-cart') return addToCart(gambleNumbers)
+        if (dataset.button === 'delete') return removeGambleFromCart(element)
+        if (dataset.number) return selectNumber(dataset.number)
       },
       true
     )
