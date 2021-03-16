@@ -53,7 +53,7 @@
       }
     }
 
-    function getNumbersRange (range) {
+    function setRangeNumbersFromKindOfGame (range) {
       if ($chooseNumbers.firstChild) removeChild($chooseNumbers)
       for (var i = 1; i <= range; i++) {
         var number = doc.createElement('div')
@@ -87,7 +87,7 @@
       }
       gambleNumbers = []
 
-      if (isClicked) return showMessage($successActions, 'Numeros Limpos')
+      if (isClicked) return showMessage($successActions, 'Jogo limpado.')
     }
 
     function generateGameNumbers (amount, range) {
@@ -123,7 +123,6 @@
 
     function removeOneNumber (number) {
       var element = getElement('div[data-number="' + number + '"]')
-
       element.classList.remove('game-number_selected')
     }
 
@@ -166,6 +165,13 @@
       showMessage($successActions, 'Jogo completado com sucesso!')
     }
 
+    function numberToReal (value) {
+      return value
+        .toFixed(2)
+        .split('.')
+        .join(',')
+    }
+
     function createCartItem (game) {
       var cartItem = createElement('div')
       var cartButtonDelete = createElement('button')
@@ -190,12 +196,7 @@
 
       textNumbers.textContent = game.numbers.join(', ')
       textPurple.textContent = game.type
-      textLight.textContent =
-        ' R$ ' +
-        game.price
-          .toFixed(2)
-          .split('.')
-          .join(',')
+      textLight.textContent = ' R$ ' + numberToReal(game.price)
       textBetType.appendChild(textPurple)
       textBetType.appendChild(textLight)
       cartItemInfo.appendChild(textNumbers)
@@ -216,7 +217,7 @@
     }
 
     function generateId () {
-      return Date.now().toString()
+      return btoa(Date.now()).toString()
     }
 
     function renderCart (game, numbers) {
@@ -263,12 +264,8 @@
         return accumulated + Number(current.price)
       }, 0)
 
-      $cartTotal.textContent =
-        'Total: R$ ' +
-        total
-          .toFixed(2)
-          .split('.')
-          .join(',')
+      $cartTotal.textContent = 'Total: R$ ' + numberToReal(total)
+
       if (!total) {
         $cartTotal.parentElement.classList.add('invisible')
         return ($cartStatus.textContent = 'Seu carrinho está vazio!')
@@ -286,7 +283,7 @@
       showMessage($cartMessage, 'Jogo removido do carrinho.')
     }
 
-    function getCurrentGameType (type) {
+    function getCurrentGame (type) {
       return allGames.filter(function (game) {
         return game.type === type
       })
@@ -300,12 +297,13 @@
       return getElement('button[data-game-type="' + type + '"]')
     }
 
-    function changeButtonGameType (type, current) {
-      if (getPreviousKindOfGame()) {
-        getPreviousKindOfGame().style.background = '#FFF'
-        getPreviousKindOfGame().style.color = currentGame.color
-        getPreviousKindOfGame().setAttribute('data-game-type-selected', 'false')
-      }
+    function setStyleToPreviusButton () {
+      getPreviousKindOfGame().style.background = '#FFF'
+      getPreviousKindOfGame().style.color = currentGame.color
+      getPreviousKindOfGame().setAttribute('data-game-type-selected', 'false')
+    }
+
+    function setStyleToCurrentButton (type) {
       allGames.map(function (game) {
         if (game.type === type) {
           getCurrentKindOfGame(type).style.background = game.color
@@ -318,18 +316,24 @@
       })
     }
 
+    function changeButtonGameType (type) {
+      if (getPreviousKindOfGame()) setStyleToPreviusButton()
+      setStyleToCurrentButton(type)
+    }
+
     function setGameType (type) {
       gambleNumbers = []
 
       showMessage($successActions, '')
       showMessage($errorActions, '')
       changeButtonGameType(type, currentGame.type)
-      currentGame = getCurrentGameType(type)[0]
+      currentGame = getCurrentGame(type)[0]
 
-      getElement('span[data-game="game-selected"]').textContent =
+      getElement('span[data-game="selected"]').textContent =
         'FOR ' + currentGame.type.toUpperCase()
+
       getElement('p[data-game="info"]').textContent = currentGame.description
-      getNumbersRange(currentGame.range)
+      setRangeNumbersFromKindOfGame(currentGame.range)
     }
 
     function cleanGamesData (games) {
