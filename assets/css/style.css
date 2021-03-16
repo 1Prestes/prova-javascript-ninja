@@ -230,6 +230,12 @@ header {
   width: 317px;
 }
 
+.cart-body {
+  max-height: 335px;
+  overflow: auto;
+  margin-bottom: 15px;
+}
+
 .cart-container {
   padding: 32px 17px;
 }

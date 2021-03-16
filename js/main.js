@@ -204,6 +204,7 @@
       setTimeout(function () {
         element.textContent = ''
       }, 5000)
+      clearTimeout()
     }
 
     function showMessage (element, message) {
