@@ -69,7 +69,7 @@
 
     function numberExists (arr, number) {
       return arr.some(function (currentValue) {
-        return currentValue === number
+        return currentValue == number
       })
     }
 
@@ -93,18 +93,12 @@
 
     function generateGameNumbers (amount, range) {
       for (var i = 1; i <= amount; i++) {
-        var newNumber = getRandomNumbers(range)
-        if (
-          i > 1 &&
-          numberExists(
-            gambleNumbers,
-            newNumber < 10 ? '0' + newNumber : newNumber
-          )
-        ) {
-          newNumber = getRandomNumbers(range)
+        var number = getRandomNumbers(range)
+        number < 10 ? (number = '0' + number) : number
+        if (numberExists(gambleNumbers, number)) {
           i--
         } else {
-          gambleNumbers.push(newNumber < 10 ? '0' + newNumber : newNumber)
+          gambleNumbers.push(number)
         }
       }
     }
@@ -139,7 +133,7 @@
         return
       }
 
-      if (gambleNumbers.length === game['max-number']) {
+      if (gambleNumbers.length >= game['max-number']) {
         gambleNumbers = removeNumber(gambleNumbers, currentNumber)
         return removeOneNumber(currentNumber)
       }
@@ -233,7 +227,7 @@
             'max-number': item['max-number'],
             color: item.color,
             'min-cart-value': item['min-cart-value'],
-            numbers
+            numbers: numbers.sort()
           }
 
           var cartItem = createCartItem(bet)
