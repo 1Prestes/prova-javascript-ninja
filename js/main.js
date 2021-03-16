@@ -16,6 +16,7 @@
     var $cartTotal = getElement('span[data-cart="total"]')
     var $cartStatus = getElement('span[data-message="cart-status"]')
     var $cartMessage = getElement('span[data-message="cart-message"]')
+    var $cartFooter = getElement('div[data-cart="footer"]')
     var $errorActions = getElement('span[data-message="actions-error"]')
     var $successActions = getElement('span[data-message="actions-success"]')
 
@@ -268,9 +269,11 @@
 
       if (!total) {
         $cartTotal.parentElement.classList.add('invisible')
+        $cartFooter.classList.add('invisible')
         return ($cartStatus.textContent = 'Seu carrinho está vazio!')
       }
       $cartTotal.parentElement.classList.remove('invisible')
+      $cartFooter.classList.remove('invisible')
     }
 
     function removeGambleFromCart (item) {

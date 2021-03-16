@@ -68,10 +68,6 @@ body {
   color: var(--red-primary);
 }
 
-.invisible {
-  display: none;
-}
-
 .button {
   background: none;
   padding: 17px 25px;
@@ -283,6 +279,10 @@ header {
 .button_save svg {
   margin-left: 10px;
   font-size: 25px;
+}
+
+.invisible {
+  display: none;
 }
 
 /* ### END CART ITEMS ### */
